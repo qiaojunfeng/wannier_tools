@@ -1176,10 +1176,11 @@
    real, parameter :: a_0 = 5.29177210903E-1 ! Bohr radius in the unit of angstrom
    
    
-   character(len=10) :: element_name(lenth_of_table) = ['H','He','Li','Be','B','C','N','O','F','Ne','Na','Mg','Al','Si','P','S','Cl','Ar','K','Ca','Sc','Ti','V','Cr','Mn','Fe','Co','Ni','Cu','Zn','Ga','Ge','As','Se','Br','Kr','Rb','Sr','Y','Zr','Nb','Mo','Tc','Ru','Rh','Pd','Ag','Cd','In','Sn','Sb','Te','I','Xe','Cs','Ba','La','Ce','Pr','Nd','Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb','Lu','Hf','Ta','W','Re','Os','Ir','Pt','Au','Hg','Tl','Pb','Bi','Po','At','Rn','Fr','Ra','Ac','Th','Pa','U','Np','Pu','Am','Cm','Bk','Cf','Es','Fm','Md','No','Lr','Rf']
+   character(len=10) :: element_name(lenth_of_table) = [character(len=10) :: 'H','He','Li','Be','B','C','N','O','F','Ne','Na','Mg','Al','Si','P','S','Cl','Ar','K','Ca','Sc','Ti','V','Cr','Mn','Fe','Co','Ni','Cu','Zn','Ga','Ge','As','Se','Br','Kr','Rb','Sr','Y','Zr','Nb','Mo','Tc','Ru','Rh','Pd','Ag','Cd','In','Sn','Sb','Te','I','Xe','Cs','Ba','La','Ce','Pr','Nd','Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb','Lu','Hf','Ta','W','Re','Os','Ir','Pt','Au','Hg','Tl','Pb','Bi','Po','At','Rn','Fr','Ra','Ac','Th','Pa','U','Np','Pu','Am','Cm','Bk','Cf','Es','Fm','Md','No','Lr','Rf']
 
    ! Each element's electron configuration
    character(len=64) :: element_electron_config(lenth_of_table) = [&
+   character(len=64) :: &
    '1s1'&
    ,'1s2'&
    ,'1s22s1'&
@@ -1286,11 +1287,17 @@
    ,'1s22s22p63s23p63d104s24p64d105s25p64f145d106s26p65f146d27s2']
 
    character :: orb_ang_sign(angular_number) = ['s','p','d','f'] ! angular signs of orbital, only "spdf" are included
+!    character(10) :: orb_sign(magnetic_number_max, angular_number) = &
+!    [['','','','s','','',''],&
+!    ['','','py','pz','px','',''],&
+!    ['','dxy','dyz','dz2','dxz','dx2-y2',''],&
+!    ['fy(3x2-y2)','fxyz','fyz2','fz3','fxz2','fz(x2-y2)','fx(x2-3y2)']]
    character(10) :: orb_sign(magnetic_number_max, angular_number) = &
-   [['','','','s','','',''],&
-   ['','','py','pz','px','',''],&
-   ['','dxy','dyz','dz2','dxz','dx2-y2',''],&
-   ['fy(3x2-y2)','fxyz','fyz2','fz3','fxz2','fz(x2-y2)','fx(x2-3y2)']]
+   reshape([character(10) :: '','','','s','','','',&
+   '','','py','pz','px','','',&
+   '','dxy','dyz','dz2','dxz','dx2-y2','',&
+   'fy(3x2-y2)','fxyz','fyz2','fz3','fxz2','fz(x2-y2)','fx(x2-3y2)'],&
+   [magnetic_number_max, angular_number])
    
 contains
 
@@ -1936,10 +1943,10 @@ module me_calculate
  
         NO_1: do while(.true.)
             
-            if ((is_a_inf == .false.).and.(is_b_inf == .false.)) then
+            if ((is_a_inf .eqv. .false.).and.(is_b_inf .eqv. .false.)) then
                 exit NO_1
             else
-                if (is_a_inf == .true.) then
+                if (is_a_inf .eqv. .true.) then
                     a_1 = a_1 - inte_step
                     a_2 = a_1 - inte_step
                     b_1 = b_1 - inte_step
@@ -1948,7 +1955,7 @@ module me_calculate
                     call integral_simpson(a_2, b_2, func, k_f, name, n, l, s_2)
                 end if
  
-                if (is_b_inf == .true.) then
+                if (is_b_inf .eqv. .true.) then
                     a_1 = b_1
                     b_1 = a_2
                     a_2 = b_2

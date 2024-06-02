@@ -1,5 +1,4 @@
-OBJ =  module.o sparse.o wt_aux.o math_lib.o symmetry.o \
-		 readHmnR.o inverse.o proteus.o \
+OBJ =  module.o sparse.o wt_aux.o math_lib.o symmetry.o readHmnR.o inverse.o proteus.o \
        eigen.o ham_qlayer2qlayer.o psi.o unfolding.o rand.o \
   		 ham_slab.o ham_bulk.o ek_slab.o ek_bulk_polar.o ek_bulk.o \
        readinput.o fermisurface.o surfgreen.o surfstat.o \
@@ -10,42 +9,38 @@ OBJ =  module.o sparse.o wt_aux.o math_lib.o symmetry.o \
 		 berry.o wanniercenter_adaptive.o \
   		 effective_mass.o findnodes.o \
 		 sigma_OHE.o sigma.o Boltz_transport_anomalous.o \
-		 2D_TSC.o \
-		main.o
+		 2D_TSC.o spin_qlayer2qlayer.o readSpinR.o \
+	main.o
 
-# compiler
-F90  = mpif90 -fpp -DMPI -fpe3 -O3 -DARPACK -DINTELMKL # -check all -traceback -g
-#F90  = ifort -fpp  -DINTELMKL -fpe3 -check all -traceback -g
-CC = mpicc -cpp -O3 -DINTELMKL 
+# compiler, here mpif90 should be comipled with gfortran
+F90  = mpif90 -cpp -DMPI -ffree-line-length-5120 -fallow-argument-mismatch                          
 
-INCLUDE = -I${MKLROOT}/include
-WFLAG = -nogen-interface
-OFLAG = -O3 -static-intel
+INCLUDE =
+WFLAG = #-Wall -Wextra -Warray-temporaries -Wconversion -fimplicit-none \
+       -fbacktrace -ffree-line-length-0 -fcheck=all -finit-real=nan \
+       -ffpe-trap=zero,overflow,underflow
+
+OFLAG = -g
 FFLAG = $(OFLAG) $(WFLAG)
 LFLAG = $(OFLAG)
 
-# ARPACK LIBRARY
-ARPACK=/Users/user/quan/work/workplace/ARPACK/libarpack_MAC.a
 
 # blas and lapack libraries
-# static linking
-#LIBS = -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a \
-        ${MKLROOT}/lib/intel64/libmkl_sequential.a \
-        ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl \
-		  ${ARPACK}
+LIBS = -llapack -lblas -L/usr/local/Cellar/arpack/3.9.1/libexec/lib -larpack
 
+# Intel MKL also supports with gfortran comipler
 # dynamic linking
-LIBS = ${ARPACK} -L/${MKLROOT}/lib/intel64 -lmkl_core -lmkl_sequential -lmkl_intel_lp64 -lpthread 
+# LIBS = -L/${MKLROOT}/lib/intel64 -lmkl_core -lmkl_sequential -lmkl_intel_lp64 -lpthread
  
+
 main : $(OBJ)
 	$(F90) $(LFLAG) $(OBJ) -o wt.x $(LIBS)
 	cp -f wt.x ../bin
 
-.SUFFIXES: .o .f90 .c
+.SUFFIXES: .o .f90
 
 .f90.o :
 	$(F90) $(FFLAG) $(INCLUDE) -c $*.f90
 
 clean :
 	rm -f *.o *.mod *~ wt.x
-
