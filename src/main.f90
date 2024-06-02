@@ -123,6 +123,7 @@
            !> for the dense hr file, we allocate HmnR
            call readNormalHmnR()
            if (valley_projection_calc) call  read_valley_operator
+           if (Read_Spin_dat) call readNormalSpinR()
         !> sparse hmnr input
         else
            call readSparseHmnR()

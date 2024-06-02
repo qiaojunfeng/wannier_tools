@@ -102,16 +102,18 @@
      !> spin operator matrix
      !> Note, the basis here should be |↑↑↓↓>
      nw_half = Num_wann/2
-     do i=1, Np
-        do j=1, nw_half
-           sigma_x( Num_wann*(i-1)+j        , Num_wann*(i-1)+j+nw_half ) =  1.0d0
-           sigma_x( Num_wann*(i-1)+j+nw_half, Num_wann*(i-1)+j         ) =  1.0d0
-           sigma_y( Num_wann*(i-1)+j        , Num_wann*(i-1)+j+nw_half ) = -zi
-           sigma_y( Num_wann*(i-1)+j+nw_half, Num_wann*(i-1)+j         ) =  zi
-           sigma_z( Num_wann*(i-1)+j        , Num_wann*(i-1)+j         ) =  1.0d0
-           sigma_z( Num_wann*(i-1)+j+nw_half, Num_wann*(i-1)+j+nw_half ) = -1.0d0
-        enddo 
-     enddo
+     if (.not. Read_Spin_dat) then
+        do i=1, Np
+            do j=1, nw_half
+            sigma_x( Num_wann*(i-1)+j        , Num_wann*(i-1)+j+nw_half ) =  1.0d0
+            sigma_x( Num_wann*(i-1)+j+nw_half, Num_wann*(i-1)+j         ) =  1.0d0
+            sigma_y( Num_wann*(i-1)+j        , Num_wann*(i-1)+j+nw_half ) = -zi
+            sigma_y( Num_wann*(i-1)+j+nw_half, Num_wann*(i-1)+j         ) =  zi
+            sigma_z( Num_wann*(i-1)+j        , Num_wann*(i-1)+j         ) =  1.0d0
+            sigma_z( Num_wann*(i-1)+j+nw_half, Num_wann*(i-1)+j+nw_half ) = -1.0d0
+            enddo 
+        enddo
+    endif
 
 
      do i=1,Ndim
@@ -134,6 +136,10 @@
            call ham_qlayer2qlayer_LOTO(k,H00,H01)
         else
            call ham_qlayer2qlayer(k,H00,H01)
+
+           if (Read_Spin_dat) then
+            call spin_qlayer2qlayer(k,sigma_x,sigma_y,sigma_z)
+           endif
         endif
 
         do j = 1, omeganum

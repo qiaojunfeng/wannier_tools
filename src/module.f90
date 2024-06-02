@@ -367,8 +367,10 @@
      character(80) :: KPorTB             ! KP or TB
      logical       :: Orthogonal_Basis   ! True or False for Orthogonal basis or non-orthogonal basis
      logical :: Is_Sparse_Hr, Is_Sparse, Is_Hrfile
+     logical :: Read_Spin_dat = .false.  ! read spin operator hr.dat
      namelist / TB_FILE / Hrfile, Particle, Package, KPorTB, Is_Hrfile, &
-        Is_Sparse, Is_Sparse_Hr, Orthogonal_Basis, Overlapfile
+        Is_Sparse, Is_Sparse_Hr, Orthogonal_Basis, Overlapfile, &
+        Read_Spin_dat
 
      !> control parameters
      logical :: BulkBand_calc    ! Flag for bulk energy band calculation
@@ -912,6 +914,7 @@
      real(dp), allocatable    :: crvec(:,:)   ! R coordinates in Cartesian coordinates in units of Angstrom
      complex(dp), allocatable :: HmnR(:,:,:)   ! Hamiltonian m,n are band indexes
      complex(dp), allocatable :: valley_operator_R(:,:,:)   ! Hamiltonian m,n are band indexes
+     complex(dp), allocatable :: SpinR(:,:,:,:) ! Spin operator, 1st and 2nd indexes: m,n are band indexes, 3rd: R, last index: spin x/y/z
      
      
      !sparse HmnR arraies
@@ -933,6 +936,7 @@
      integer, allocatable     :: ndegen(:)  ! degree of degeneracy of R point
 
      complex(dp), allocatable :: HmnR_surfacecell(:,:,:)   ! Hamiltonian m,n are band indexes
+     complex(dp), allocatable :: SpinR_surfacecell(:,:,:,:)   ! Spin m,n are band indexes
      real(dp), allocatable :: Atom_position_cart_newcell(:,:)   ! Hamiltonian m,n are band indexes
      real(dp), allocatable :: Atom_position_direct_newcell(:,:)   ! Hamiltonian m,n are band indexes
      integer, allocatable     :: irvec_surfacecell(:,:)   ! R coordinates

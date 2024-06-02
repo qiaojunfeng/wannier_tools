@@ -48,6 +48,7 @@ subroutine readinput
    Is_Sparse_Hr= .FALSE.
    Is_Sparse   = .FALSE.
    Orthogonal_Basis = .TRUE.
+   Read_Spin_dat = .false.
    read(1001, TB_FILE, iostat= stat)
    if (stat/=0) then
       Hrfile='wannier90_hr.dat'
@@ -5053,6 +5054,3 @@ subroutine eliminate_duplicates_with_tol(ndim1, ndim2, array2, Nleft, tol)
 
    return
 end subroutine eliminate_duplicates_with_tol
-
-
-
